@@ -1,4 +1,5 @@
 import getpass
+import logging
 import re
 import tempfile
 import zipfile
@@ -56,7 +57,15 @@ def main(
             assert submission_directory.is_dir()
             student_id = submission_directory.name.split("-")[1].split("_")[0]
             submission_file = next(submission_directory.iterdir())
-            assert submission_file.is_file()
+
+            if not submission_file.is_file():
+                logging.warning(f"Skipping {submission_file} as it is not a file")
+                continue
+
+            if submission_file.name != "__init__.py":
+                logging.warning(f"Skipping {submission_file} as it is __init__.py")
+                continue
+
             destination_file = (submissions_directory / student_id).with_suffix(
                 submission_file.suffix
             )

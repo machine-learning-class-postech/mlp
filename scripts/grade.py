@@ -42,7 +42,7 @@ class Report(list[ReportItem]):
     def summary(self):
         return {
             "score": sum(item.score for item in self),
-            "items": [item.model_dump() for item in self],
+            "deductions": [item.model_dump() for item in self if item.score == 0.0],
         }
 
     @property
@@ -169,23 +169,30 @@ class Submissions(list[Submission]):
 
         result = Parallel(n_jobs=-1)(delayed(_)(submission) for submission in self)
 
-        oracle_item_names: set[str] = (
-            {item.name for item in result[0][0]} if result else set()
-        )
+        oracle_item_names: set[str] = set()
 
-        for report, key in result:
+        for report, _key in result:
             item_names = {item.name for item in report}
-            if item_names != oracle_item_names:
-                raise ValueError(
-                    f"Report for submission '{key}' has inconsistent item names: "
-                    f"expected {oracle_item_names}, got {item_names}"
+            if len(item_names) > len(oracle_item_names):
+                oracle_item_names = (
+                    item_names  # TODO: Check list of names statically for consistency
                 )
+
+        for report, _key in result:
+            for item_name in oracle_item_names:
+                if item_name not in {item.name for item in report}:
+                    report.append(ReportItem(name=item_name, score=0.0))
 
         return result
 
     def table(self) -> tuple[list[str], list[list[str]]]:
         _reports_with_key = self.reports_with_key()
-        headers = ["key"] + ["total"] + [item.name for item in _reports_with_key[0][0]]
+        headers = (
+            ["key"]
+            + ["total"]
+            + [item.name for item in _reports_with_key[0][0]]
+            + ["summary"]
+        )
         rows: list[list[str]] = []
 
         reference_order = [item.name for item in _reports_with_key[0][0]]
@@ -195,6 +202,7 @@ class Submissions(list[Submission]):
                 [key]
                 + [str(report.summary["score"])]
                 + [str(score_map[name]) for name in reference_order]
+                + [report.json]
             )
 
         return headers, rows
