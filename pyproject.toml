@@ -1,0 +1,36 @@
+[project]
+name = "machine-learning-in-postech"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = ["mlp", "supervised-learning"]
+
+[tool.uv.workspace]
+members = ["packages/mlp", "packages/supervised-learning"]
+
+[tool.uv.sources]
+mlp = { workspace = true }
+supervised-learning = { workspace = true }
+
+[dependency-groups]
+dev = [
+    "joblib-stubs>=1.5.2.0.20250831",
+    "pyright>=1.1.399",
+    "pytest>=8.3.5",
+    "ruff>=0.11.5",
+]
+grading = [
+    "click>=8.2.1",
+    "joblib>=1.5.2",
+    "requests>=2.32.5",
+    "tqdm",
+    "pydantic>=2.11.7",
+]
+
+[tool.pyright]
+exclude = ["**/node_modules", "**/__pycache__", "**/.*"]
+typeCheckingMode = "strict"
+
+[tool.pytest.ini_options]
+markers = ["private", "public", "point"]

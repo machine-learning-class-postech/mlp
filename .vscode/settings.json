@@ -1,0 +1,21 @@
+{
+    "[python]": {
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit",
+            "source.organizeImports": "explicit"
+        },
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnPaste": true
+    },
+    "python.analysis.autoImportCompletions": true,
+    "[markdown]": {
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit",
+            "source.organizeImports": "explicit"
+        },
+        "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
+        "editor.formatOnPaste": true
+    }
+}
