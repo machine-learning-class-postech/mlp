@@ -45,7 +45,7 @@ class Linear(SecondOrderModule[np.ndarray]):
         Forward pass: compute y = x @ W^T + b.
 
         Args:
-            x: Input vector of shape (input_size,)
+            x: Input vector of shape (batch_size, input_size,)
 
         Returns:
             Output vector of shape (output_size,)

@@ -47,7 +47,7 @@ Second-order optimization using Hessian information.
 
 **Features:**
 
-- Uses Hessian approximation
+- Uses diagonal approximation of Hessian
 - Numerical stability considerations
 
 ### Mean Squared Error (`MeanSquaredError`)
