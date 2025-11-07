@@ -184,3 +184,9 @@ packages/supervised-learning/tests/test_mean_squared_error_private.py
 packages/supervised-learning/tests/test_newton_private.py
 packages/supervised-learning/tests/test_relu_private.py
 packages/supervised-learning/tests/test_stochastic_gradient_descent_private.py
+packages/autoregressive/tests/test_attention_private.py
+packages/autoregressive/tests/test_decoder_private.py
+packages/autoregressive/tests/test_feed_forward_private.py
+packages/autoregressive/tests/test_layer_norm_private.py
+packages/autoregressive/tests/test_positonal_encoding_private.py
+packages/autoregressive/submissions/solution.py
