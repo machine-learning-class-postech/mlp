@@ -119,3 +119,120 @@ class EquationDataset(Dataset[tuple[np.ndarray, np.ndarray]]):
         xs = np.stack([item[0] for item in x], axis=0)
         ys = np.stack([item[1] for item in x], axis=0)
         return xs, ys
+
+
+class TinyShakespeareDataset(Dataset[tuple[np.ndarray, np.ndarray]]):
+    """
+    Tiny Shakespeare character-level LM dataset.
+
+    Each item is a window:
+        x: (T,) int64 chars
+        y: (T,) int64 next chars
+    """
+
+    def __init__(
+        self,
+        inputs: np.ndarray,  # (N, T) int64
+        targets: np.ndarray,  # (N, T) int64
+        stoi: dict[str, int],
+        itos: list[str],
+    ):
+        assert inputs.dtype == np.int64 and targets.dtype == np.int64
+        assert inputs.shape == targets.shape and inputs.ndim == 2
+        self._x = inputs
+        self._y = targets
+        self.stoi = dict(stoi)
+        self.itos = list(itos)
+        self.vocab_size = len(self.itos)
+
+    def __len__(self) -> int:
+        return self._x.shape[0]
+
+    def __getitem__(self, index: int) -> tuple[np.ndarray, np.ndarray]:
+        return self._x[index], self._y[index]
+
+    @staticmethod
+    def _build_vocab(text: str) -> tuple[dict[str, int], list[str]]:
+        chars = sorted(list(set(text)))
+        itos = chars
+        stoi = {ch: i for i, ch in enumerate(itos)}
+        return stoi, itos
+
+    @staticmethod
+    def _encode(text: str, stoi: dict[str, int]) -> np.ndarray:
+        arr = np.fromiter((stoi[c] for c in text), dtype=np.int64, count=len(text))
+        return arr
+
+    @staticmethod
+    def _make_windows(
+        tokens: np.ndarray,  # (L,)
+        seq_len: int,
+        stride: int,
+    ) -> tuple[np.ndarray, np.ndarray]:
+        """
+        Turn a long token array into (N, T) windows for x and y (teacher forcing).
+        Only windows that fully fit (T+1) are kept.
+        """
+        L = tokens.shape[0]
+        T = int(seq_len)
+        if L < T + 1:
+            return np.empty((0, T), dtype=np.int64), np.empty((0, T), dtype=np.int64)
+
+        # number of windows with given stride that have T+1 length available
+        N = 1 + (L - (T + 1)) // stride
+        xs = np.empty((N, T), dtype=np.int64)
+        ys = np.empty((N, T), dtype=np.int64)
+        for i in range(N):
+            start = i * stride
+            chunk = tokens[start : start + T + 1]
+            xs[i] = chunk[:-1]
+            ys[i] = chunk[1:]
+        return xs, ys
+
+    @staticmethod
+    def from_cache_directory_or_download(
+        cache_directory: Path,
+        *,
+        seq_len: int = 128,
+        stride: int = 128,
+        train_ratio: float = 0.9,
+        base_url: str = "https://raw.githubusercontent.com/karpathy/char-rnn/master/data/tinyshakespeare/input.txt",
+        filename: str = "tinyshakespeare_input.txt",
+    ) -> tuple[TinyShakespeareDataset, TinyShakespeareDataset]:
+        """
+        Download (if needed) and build train/val datasets of windows.
+
+        Returns:
+            (train_dataset, val_dataset)
+        """
+        cache_directory.mkdir(parents=True, exist_ok=True)
+        raw_path = cache_directory / filename
+        if not raw_path.exists():
+            urllib.request.urlretrieve(base_url, raw_path)
+
+        text = raw_path.read_text(encoding="utf-8")
+        stoi, itos = TinyShakespeareDataset._build_vocab(text)
+        tokens = TinyShakespeareDataset._encode(text, stoi)  # (L,)
+
+        L = tokens.shape[0]
+        split = int(L * train_ratio)
+        train_tok = tokens[:split]
+        val_tok = tokens[split:]
+
+        x_tr, y_tr = TinyShakespeareDataset._make_windows(train_tok, seq_len, stride)
+        x_va, y_va = TinyShakespeareDataset._make_windows(val_tok, seq_len, stride)
+
+        train_ds = TinyShakespeareDataset(x_tr, y_tr, stoi, itos)
+        val_ds = TinyShakespeareDataset(x_va, y_va, stoi, itos)
+        return train_ds, val_ds
+
+    @staticmethod
+    def collate(
+        x: list[tuple[np.ndarray, np.ndarray]],
+    ) -> tuple[np.ndarray, np.ndarray]:
+        """
+        Stack into (B, T) int64 inputs/targets (no one-hot).
+        """
+        inputs = np.stack([item[0] for item in x], axis=0).astype(np.int64, copy=False)
+        targets = np.stack([item[1] for item in x], axis=0).astype(np.int64, copy=False)
+        return inputs, targets
