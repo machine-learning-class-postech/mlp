@@ -4,14 +4,19 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = ["mlp", "supervised-learning"]
+dependencies = ["mlp", "supervised-learning", "autoregressive"]
 
 [tool.uv.workspace]
-members = ["packages/mlp", "packages/supervised-learning"]
+members = [
+    "packages/mlp",
+    "packages/supervised-learning",
+    "packages/autoregressive",
+]
 
 [tool.uv.sources]
 mlp = { workspace = true }
 supervised-learning = { workspace = true }
+autoregressive = { workspace = true }
 
 [dependency-groups]
 dev = [
