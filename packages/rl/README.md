@@ -47,7 +47,7 @@ $$
 V_{new}(s) \leftarrow \max_{a} \left( R(s) + \gamma V_{old}(\text{next}(s, a)) \right)
 $$
 
-*Note: Since the environment is deterministic, the summation over $s'$ is removed. Also, we use the state-reward definition $R(s)$ (reward at current state) rather than the transition-reward $R(s, a, s')$.*
+*Note*: Since the environment is deterministic, the summation over $s'$ is removed. Also, we use the state-reward definition $R(s)$ (reward at current state) rather than the transition-reward $R(s, a, s')$.
 <!-- 2. Synchronous Update:Ensure you use the values from the previous iteration (V) to compute the values for the current iteration (new_V).
 3. Convergence Check:The loop should terminate when the maximum change in value function ($\Delta$) is less than $\theta$. -->
 
@@ -59,20 +59,26 @@ This requires implementing two distinct steps inside the main loop:
 
 Implementation Requirements:
 
-1. **Step 1 (Policy Evaluation)**: Implement the Bellman Expectation Equation to evaluate the current policy $\pi$.
-    - Update $V(s)$ based on the action selected by the current policy:
-    $$
-    V_{new}(s) \leftarrow R(s) + \gamma V_{old}(\text{next}(s, \pi(s)))
-    $$
-    - Repeat this step until $V$ converges (inner loop).
-2. **Step 2 (Policy Improvement)**: Implement the Greedy Update to improve the policy.
-    - For each state, calculate the Q-value for all actions and update the policy to choose the action that maximizes the Q-value.
-    $$
-    \pi(s) \leftarrow \arg\max_a \left( R(s) + \gamma V(\text{next}(s, a)) \right)
-    $$
-    - Check if the policy has changed to determine if the main loop should terminate.
+#### **Step 1 (Policy Evaluation)**: Implement the Bellman Expectation Equation to evaluate the current policy $\pi$
 
-*Note: Since the environment is deterministic, the summation over $s'$ is removed. Also, we use the state-reward definition $R(s)$ (reward at current state) rather than the transition-reward $R(s, a, s')$.*
+- Update $V(s)$ based on the action selected by the current policy:
+
+$$
+V_{new}(s) \leftarrow R(s) + \gamma V_{old}(\text{next}(s, \pi(s)))
+$$
+
+- Repeat this step until $V$ converges (inner loop).
+
+#### **Step 2 (Policy Improvement)**: Implement the Greedy Update to improve the policy
+
+- For each state, calculate the Q-value for all actions and update the policy to choose the action that maximizes the Q-value.
+
+$$
+\pi(s) \leftarrow \arg\max_a \left( R(s) + \gamma V(\text{next}(s, a)) \right)$$
+
+- Check if the policy has changed to determine if the main loop should terminate.
+
+*Note*: Since the environment is deterministic, the summation over $s'$ is removed. Also, we use the state-reward definition $R(s)$ (reward at current state) rather than the transition-reward $R(s, a, s')$.
 
 ## Submission
 
