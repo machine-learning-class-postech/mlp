@@ -18,6 +18,7 @@ This repository contains assignments for the machine learning course at POSTECH.
 |------------|-------------|------|
 | Supervised Learning | Implement various supervised learning algorithms. | [packages/supervised-learning](packages/supervised-learning) |
 | Autoregressive Modeling | Build and train decoder-only transformer architectures for autoregressive sequence modeling. | [packages/autoregressive](packages/autoregressive) |
+| Autoregressive Modeling | Implement DP RL (Value iteration, Policy iteration) for maze mdp. | [packages/rl](packages/rl) |
 
 ## Notice on the Use of Generative Coding Tools
 
@@ -37,3 +38,5 @@ By undertaking this assignment, you affirm your commitment to these principles a
   - <mailto:minjae.gwon@postech.ac.kr>
 - Junyoung Yang
   - <mailto:sheepjun0330@postech.ac.kr>
+- Minjae Lee
+  - <mailto:minjae.lee@postech.ac.kr>

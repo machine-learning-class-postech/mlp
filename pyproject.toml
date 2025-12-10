@@ -4,19 +4,27 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = ["mlp", "supervised-learning", "autoregressive"]
+dependencies = [
+    "mlp",
+    "supervised-learning",
+    "autoregressive",
+    "wandb>=0.22.3",
+    "matplotlib>=3.10.7",
+]
 
 [tool.uv.workspace]
 members = [
     "packages/mlp",
     "packages/supervised-learning",
     "packages/autoregressive",
+    "packages/rl",
 ]
 
 [tool.uv.sources]
 mlp = { workspace = true }
 supervised-learning = { workspace = true }
 autoregressive = { workspace = true }
+rl = { workspace = true }
 
 [dependency-groups]
 dev = [

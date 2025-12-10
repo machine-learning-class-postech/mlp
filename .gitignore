@@ -190,3 +190,5 @@ packages/autoregressive/tests/test_feed_forward_private.py
 packages/autoregressive/tests/test_layer_norm_private.py
 packages/autoregressive/tests/test_positonal_encoding_private.py
 packages/autoregressive/submissions/solution.py
+packages/rl/submissions/solution.py
+packages/rl/tests/test_rl_private.py
