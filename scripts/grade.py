@@ -93,7 +93,7 @@ class _GradingCollector:
                 )
 
             module = module_from_spec(spec)
-            sys.modules["supervised_learning"] = module
+            sys.modules[self._assignment.key] = module
 
             if spec.loader is None:
                 raise ImportError(
